@@ -4,13 +4,13 @@ from tabulate import tabulate
 import csv
 from datetime import datetime
 
-# Mock conversion rate
+# Conversion rate
 USD_TO_KES = 130
 
-# Mock URL or local HTML page (change as needed)
-URL = "https://cars.toscrape.mock/page-1.html"  # Replace with real site if you get one
 
-# Sample for testing (use this instead of the requests.get)
+URL = "https://cars.toscrape.mock/page-1.html"  
+
+# Sample for testing purposes
 mock_html = """
 <html><body>
 <div class="car">
@@ -32,8 +32,8 @@ cars = []
 
 def scrape_cars():
     try:
-        # soup = BeautifulSoup(requests.get(URL).text, 'html.parser')  # Use for real site
-        soup = BeautifulSoup(mock_html, 'html.parser')  # For testing
+        
+        soup = BeautifulSoup(mock_html, 'html.parser') 
 
         car_items = soup.select('.car')
 
@@ -63,7 +63,7 @@ def display_table(data):
     print("\n🚗 Car Prices (Converted):\n")
     print(tabulate(data, headers="keys", tablefmt="grid"))
 
-# Main flow
+# Flow
 scrape_cars()
 if cars:
     display_table(cars)
