@@ -5,39 +5,54 @@ import csv
 from datetime import datetime
 
 # Mock conversion rate
-GBP_TO_KES = 160
+USD_TO_KES = 130
 
-# URL to scrape
-URL = "https://books.toscrape.com/catalogue/page-1.html"
+# Mock URL or local HTML page (change as needed)
+URL = "https://cars.toscrape.mock/page-1.html"  # Replace with real site if you get one
 
-# Lists to store data
-books = []
+# Sample for testing (use this instead of the requests.get)
+mock_html = """
+<html><body>
+<div class="car">
+    <h2 class="car-name">Toyota Premio</h2>
+    <span class="price">$8000</span>
+</div>
+<div class="car">
+    <h2 class="car-name">Mazda Axela</h2>
+    <span class="price">$7500</span>
+</div>
+<div class="car">
+    <h2 class="car-name">Subaru Impreza</h2>
+    <span class="price">$9500</span>
+</div>
+</body></html>
+"""
 
-def scrape_books(url):
+cars = []
+
+def scrape_cars():
     try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise error for bad response
-        soup = BeautifulSoup(response.text, 'html.parser')
+        # soup = BeautifulSoup(requests.get(URL).text, 'html.parser')  # Use for real site
+        soup = BeautifulSoup(mock_html, 'html.parser')  # For testing
 
-        # Find all book containers
-        book_items = soup.select('.product_pod')
+        car_items = soup.select('.car')
 
-        for item in book_items[:10]:  # Limit to 10 books
-            title = item.h3.a['title']
-            price_str = item.select_one('.price_color').text.strip()
-            price_gbp = float(price_str[1:])  # Remove '£'
-            price_kes = round(price_gbp * GBP_TO_KES, 2)
+        for item in car_items:
+            name = item.select_one('.car-name').text.strip()
+            price_str = item.select_one('.price').text.strip()
+            price_usd = float(price_str.replace('$', ''))
+            price_kes = round(price_usd * USD_TO_KES, 2)
 
-            books.append({
-                'Title': title,
-                'Price (GBP)': price_gbp,
+            cars.append({
+                'Car Name': name,
+                'Price (USD)': price_usd,
                 'Price (KES)': price_kes
             })
 
     except requests.RequestException as e:
-        print(f"Error fetching data: {e}")
+        print(f"Error fetching car data: {e}")
 
-def save_to_csv(data, filename='books_converted.csv'):
+def save_to_csv(data, filename='cars_converted.csv'):
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
@@ -45,12 +60,12 @@ def save_to_csv(data, filename='books_converted.csv'):
     print(f"\n✅ Data saved to {filename}")
 
 def display_table(data):
-    print("\n📚 Book Prices (Converted):\n")
+    print("\n🚗 Car Prices (Converted):\n")
     print(tabulate(data, headers="keys", tablefmt="grid"))
 
 # Main flow
-scrape_books(URL)
-if books:
-    display_table(books)
-    save_to_csv(books)
+scrape_cars()
+if cars:
+    display_table(cars)
+    save_to_csv(cars)
     print(f"\n🕒 Conversion done at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
