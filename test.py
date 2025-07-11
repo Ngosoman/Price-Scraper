@@ -57,10 +57,10 @@ def save_to_csv(data, filename='cars_converted.csv'):
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
-    print(f"\n✅ Data saved to {filename}")
+    print(f"\n Data saved to {filename}")
 
 def display_table(data):
-    print("\n🚗 Car Prices (Converted):\n")
+    print("\n Car Prices (Converted):\n")
     print(tabulate(data, headers="keys", tablefmt="grid"))
 
 # Flow
@@ -68,4 +68,4 @@ scrape_cars()
 if cars:
     display_table(cars)
     save_to_csv(cars)
-    print(f"\n🕒 Conversion done at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\nConversion done at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
